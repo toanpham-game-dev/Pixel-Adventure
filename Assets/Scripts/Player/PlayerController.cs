@@ -5,16 +5,14 @@ public class PlayerController : MonoBehaviour
     // Data
     [SerializeField] private PlayerData playerData;
 
+    [SerializeField] private string _state;
+    [Range(0f, 1f)][SerializeField] private float _timeScale;
+
     // Components
     private IPlayerInput _input;
     private IAnimationController _anim;
     private IPlayerMovement _movement;
     private Rigidbody2D _rb;
-
-    // State Machine
-    private PlayerStateMachine _stateMachine;
-    public PlayerIdleState IdleState { get; private set; }
-    public PlayerMoveState MoveState { get; private set; }
 
     // Readonly exposes
     public IPlayerInput Input => _input;
@@ -30,25 +28,5 @@ public class PlayerController : MonoBehaviour
         _anim = GetComponent<IAnimationController>();
         _movement = GetComponent<IPlayerMovement>();
         _rb = GetComponent<Rigidbody2D>();
-
-        // State machine & states
-        _stateMachine = new PlayerStateMachine();
-        IdleState = new PlayerIdleState(this, _stateMachine);
-        MoveState = new PlayerMoveState(this, _stateMachine);
-    }
-
-    private void Start()
-    {
-        _stateMachine.Initialize(IdleState);
-    }
-
-    private void Update()
-    {
-        _stateMachine.Update();
-    }
-
-    private void FixedUpdate()
-    {
-        _stateMachine.FixedUpdate();
     }
 }
