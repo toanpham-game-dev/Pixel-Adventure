@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class AnimationController : MonoBehaviour, IAnimationController
 {
     [SerializeField] private Animator _animator;
