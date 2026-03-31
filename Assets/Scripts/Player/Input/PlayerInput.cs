@@ -55,4 +55,16 @@ public class PlayerInput : MonoBehaviour, IPlayerInput
         JumpUp = true;
         JumpHeld = false;
     }
+
+    public void DisableInput()
+    {
+        _moveAction.action.Disable();
+        _jumpAction.action.Disable();
+    }
+
+    public void EnableInput()
+    {
+        _moveAction.action.Enable();
+        _jumpAction.action.Enable();
+    }
 }

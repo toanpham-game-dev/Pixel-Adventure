@@ -19,6 +19,8 @@ public class AnimationController : MonoBehaviour, IAnimationController
     /// <param name="animationName">Animation state name in Animator.</param>
     public void PlayAnimation(string animationName)
     {
+        if (!enabled) return;
+
         if (_transitionCoroutine != null)
         {
             StopCoroutine(_transitionCoroutine);
@@ -35,6 +37,8 @@ public class AnimationController : MonoBehaviour, IAnimationController
     /// <param name="nextAnim">Next animation state name.</param>
     public void PlayThenTransition(string firstAnim, string nextAnim)
     {
+        if (!enabled) return;
+
         if (_transitionCoroutine != null)
         {
             StopCoroutine(_transitionCoroutine);
