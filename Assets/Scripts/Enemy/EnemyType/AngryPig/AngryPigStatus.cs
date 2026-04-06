@@ -12,7 +12,7 @@ public class AngryPigStatus : EnemyStatus, IEnemyHit
     [SerializeField] private float _horizontalForce;
     [SerializeField] private GameObject _headTrigger;
 
-    private Collider2D _col;
+    private Collider2D[] _cols;
     private Rigidbody2D _rb;
 
     private int _currentHits;
@@ -22,7 +22,7 @@ public class AngryPigStatus : EnemyStatus, IEnemyHit
     {
         _anim = GetComponent<IAnimationController>();
         _angryPigBrain = GetComponent<AngryPigBrain>();
-        _col = GetComponent<Collider2D>();
+        _cols = GetComponents<Collider2D>();
         _rb = GetComponent<Rigidbody2D>();
     }
 
@@ -67,7 +67,10 @@ public class AngryPigStatus : EnemyStatus, IEnemyHit
 
     private void OnDead()
     {
-        _col.enabled = false;
+        foreach (var col in _cols)
+        {
+            col.enabled = false;
+        }
         _angryPigBrain.enabled = false;
 
         float dir = Random.value < 0.5f ? -1f : 1f;

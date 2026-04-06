@@ -6,7 +6,9 @@ public enum EnemyState
     Move,
     Chase,
     Attack,
-    Dead
+    Dead,
+    FlyUp,
+    IsGrounded
 }
 
 public abstract class EnemyStatus : MonoBehaviour
@@ -36,5 +38,15 @@ public abstract class EnemyStatus : MonoBehaviour
     public virtual void Dead()
     {
         State = EnemyState.Dead;
+    }
+
+    public virtual void FlyUp()
+    {
+        State = EnemyState.FlyUp;
+    }
+
+    public virtual void IsGrounded()
+    {
+        State = EnemyState.IsGrounded;
     }
 }

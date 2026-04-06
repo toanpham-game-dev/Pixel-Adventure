@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyContext
@@ -9,6 +10,7 @@ public class EnemyContext
     public float AttackRange { get; }
     public float ViewRange { get; }
     public EnemyStatus Status { get; }
+    public List<Vector2> DebugPath { get; set; }
 
     public EnemyContext(Transform self, Transform target, IMover mover, IPathfinder pathfinder, float attackRange, float viewRange, EnemyStatus status)
     {

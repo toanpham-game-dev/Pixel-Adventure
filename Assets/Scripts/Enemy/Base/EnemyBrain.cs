@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -58,4 +59,25 @@ public abstract class EnemyBrain : MonoBehaviour
     /// Subclasses must construct and return the behavior tree root node.
     /// </summary>
     protected abstract IBehaviorNode CreateBehaviorTree();
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying)
+            return;
+
+        if (Context == null || Context.DebugPath == null)
+            return;
+
+        var path = Context.DebugPath;
+
+        Gizmos.color = Color.yellow;
+
+        for (int i = 0; i < path.Count; i++)
+        {
+            Gizmos.DrawSphere(path[i], 0.12f);
+
+            if (i < path.Count - 1)
+                Gizmos.DrawLine(path[i], path[i + 1]);
+        }
+    }
 }
