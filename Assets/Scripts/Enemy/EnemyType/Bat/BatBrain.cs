@@ -9,15 +9,22 @@ public class BatBrain : EnemyBrain
     {
         return new SelectorNode(new List<IBehaviorNode>
         {
-            // 1) If bat can see the target -> chase
+            // Dead
+            new SequenceNode(new List<IBehaviorNode>
+            {
+                new ConditionIsDead(),
+                new ActionDie()
+            }),
+
+            // Chase
             new SequenceNode(new List<IBehaviorNode>
             {
                 new ConditionCanSeeTarget(_targetMask),
-                new BatChaseNode()
+                new ActionMoveToTarget()
             }),
 
-            // 2) Default behavior: idle
-            new BatIdleNode()
+            // Idle
+            new ActionBatIdle()
         });
     }
 }

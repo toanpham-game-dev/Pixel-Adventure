@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class GridMover2D : MonoBehaviour, IMover
 {
     // Movement speed (units per second)
-    [SerializeField] private float moveSpeed;
+    [SerializeField] private float _moveSpeed;
 
     // Cached Rigidbody2D for physics-based movement
     private Rigidbody2D _rb;
@@ -19,17 +19,28 @@ public class GridMover2D : MonoBehaviour, IMover
     // Index of the current waypoint in the path
     private int _currentIndex;
 
+    public float MoveSpeed
+    {
+        get { return _moveSpeed; }
+        set { _moveSpeed = value; }
+    }    
+
     private void Awake()
     {
         // Cache the Rigidbody2D reference
         _rb = GetComponent<Rigidbody2D>();
     }
 
+    public void MoveDirection(Vector2 dir)
+    {
+        _rb.linearVelocity = dir.normalized * _moveSpeed;
+    }
+
     // Move directly towards a single target position
     public void MoveTowards(Vector2 target)
     {
         Vector2 dir = (target - _rb.position).normalized;
-        _rb.linearVelocity = dir * moveSpeed;
+        _rb.linearVelocity = dir * _moveSpeed;
     }
 
     // Follow an ordered list of world-space waypoints
@@ -65,7 +76,7 @@ public class GridMover2D : MonoBehaviour, IMover
         }
 
         Vector2 dir = (waypoint - _rb.position).normalized;
-        _rb.linearVelocity = dir * moveSpeed;
+        _rb.linearVelocity = dir * _moveSpeed;
     }
 
     // Stop movement and clear current path

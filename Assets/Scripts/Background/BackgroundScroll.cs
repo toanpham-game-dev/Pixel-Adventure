@@ -1,9 +1,14 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Scrolls a background material by updating shader offsets over time.
+/// Supports horizontal and vertical scrolling.
+/// </summary>
 public class BackgroundScroll : MonoBehaviour
 {
     [SerializeField] private Material _mat;
+
     [SerializeField] private bool _horizontal;
     [SerializeField] private bool _vertical;
 
@@ -13,7 +18,7 @@ public class BackgroundScroll : MonoBehaviour
     private float _offsetX;
     private float _offsetY;
 
-    void Update()
+    private void Update()
     {
         if (!Application.isPlaying) return;
 

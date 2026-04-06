@@ -266,6 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 27135883}
   - component: {fileID: 27135882}
+  - component: {fileID: 27135884}
   m_Layer: 0
   m_Name: HUD Controller
   m_TagString: Untagged
@@ -285,10 +286,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1bf3dae2b0f128499540edd6e79745e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HUDController
-  _smallHeart:
-  - {fileID: 2050296212}
-  - {fileID: 542883337}
-  - {fileID: 901924496}
   _coinText: {fileID: 1518736}
 --- !u!4 &27135883
 Transform:
@@ -305,6 +302,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &27135884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27135881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2fa4f053e0b9324b98889bfb988dbe7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealthPresenter
+  _playerHealth: {fileID: 0}
+  _hearts:
+  - {fileID: 2050296212}
+  - {fileID: 542883337}
+  - {fileID: 901924496}
 --- !u!1 &393915991
 GameObject:
   m_ObjectHideFlags: 0

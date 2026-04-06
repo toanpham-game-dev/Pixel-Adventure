@@ -1,25 +1,14 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// A Sequence node evaluates its child nodes in order on every tick.
-/// - Returns Failure immediately if any child fails.
-/// - Returns Running if a child is still running.
-/// - Returns Success only if all children succeed.
-/// 
-/// This implementation is stateless and re-evaluates
-/// children from the beginning each tick.
+/// Sequence node that evaluates children in order.
+/// Fails if any child fails, runs if a child is running,
+/// and succeeds only when all children succeed.
 /// </summary>
 public class SequenceNode : CompositeNode
 {
-    /// <summary>
-    /// Creates a sequence node with the given child nodes.
-    /// </summary>
-    /// <param name="children">Child behavior nodes.</param>
     public SequenceNode(List<IBehaviorNode> children) : base(children) { }
 
-    /// <summary>
-    /// Executes the sequence logic by ticking children in order.
-    /// </summary>
     public override NodeState Tick(EnemyContext context, float deltaTime)
     {
         bool anyRunning = false;
@@ -28,13 +17,13 @@ public class SequenceNode : CompositeNode
         {
             var state = child.Tick(context, deltaTime);
 
-            // If any child fails, the whole sequence fails
+            // Fail immediately if a child fails
             if (state == NodeState.Failure)
             {
                 return NodeState.Failure;
             }
 
-            // If a child is running, the sequence stays running
+            // Sequence continues running if a child is still running
             if (state == NodeState.Running)
             {
                 anyRunning = true;

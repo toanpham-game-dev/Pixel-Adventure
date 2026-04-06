@@ -1,10 +1,6 @@
-﻿/*
-    Created by @DawnosaurDev at youtube.com/c/DawnosaurStudios
-    (Dash removed cleanly)
-*/
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IPlayerMovement
 {
     public PlayerController _playerController;
 
@@ -60,6 +56,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (_playerController.state != PlayerState.Normal) return;
+
         #region TIMERS
         LastOnGroundTime -= Time.deltaTime;
         LastOnWallTime -= Time.deltaTime;
@@ -214,6 +212,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_playerController.state != PlayerState.Normal) return;
+
         if (IsWallJumping)
             Run(_playerController.Data.wallJumpRunLerp);
         else
@@ -276,7 +276,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region JUMP METHODS
-    private void Jump()
+    public void Jump()
     {
         LastPressedJumpTime = 0;
         LastOnGroundTime = 0;

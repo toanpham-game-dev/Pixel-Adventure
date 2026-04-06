@@ -121,115 +121,128 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hit 1 (36x30)_0
+      name: Hit (36x30)_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 36
         height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: cddc48fc441316970800000000000000
-      internalID: 8746326122939338204
+      spriteID: 9b95a44f782ad6b42912e8fe72707990
+      internalID: 736879983
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hit 1 (36x30)_1
+      name: Hit (36x30)_1
       rect:
         serializedVersion: 2
         x: 36
         y: 0
         width: 36
         height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 46eb5a0f4f4d6c650800000000000000
-      internalID: 6252919281125015140
+      spriteID: 2cbee26e6c0cf2b4e81faa8d00580ac6
+      internalID: -422913926
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hit 1 (36x30)_2
+      name: Hit (36x30)_2
       rect:
         serializedVersion: 2
         x: 72
         y: 0
         width: 36
         height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 214ed04e6e8938050800000000000000
-      internalID: 5801648862419346450
+      spriteID: 72498e30d8d4464469713ec9b1608478
+      internalID: 392127187
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hit 1 (36x30)_3
+      name: Hit (36x30)_3
       rect:
         serializedVersion: 2
         x: 108
         y: 0
         width: 36
         height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 034220294db548790800000000000000
-      internalID: -7528791708515818448
+      spriteID: 173aaeaa0cc14cd4db76680d1c74e5ce
+      internalID: -1717023403
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Hit 1 (36x30)_4
+      name: Hit (36x30)_4
       rect:
         serializedVersion: 2
         x: 144
         y: 0
         width: 36
         height: 30
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 6efdb48babc0d0780800000000000000
-      internalID: -8715295707796611098
+      spriteID: 60985d91329fba843969a95b9ce82031
+      internalID: 1347409435
       vertices: []
       indices: 
       edges: []
@@ -248,13 +261,13 @@ TextureImporter:
     spriteCustomMetadata:
       entries:
       - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":36.0,"y":30.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":36.0,"y":30.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.0},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":7,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Hit 1 (36x30)_0: 8746326122939338204
-      Hit 1 (36x30)_1: 6252919281125015140
-      Hit 1 (36x30)_2: 5801648862419346450
-      Hit 1 (36x30)_3: -7528791708515818448
-      Hit 1 (36x30)_4: -8715295707796611098
+      Hit (36x30)_0: 736879983
+      Hit (36x30)_1: -422913926
+      Hit (36x30)_2: 392127187
+      Hit (36x30)_3: -1717023403
+      Hit (36x30)_4: 1347409435
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -2,46 +2,44 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 
 /// <summary>
-/// Builds a grid graph for A* pathfinding using two tilemaps:
-/// - groundTilemap
-/// - wallTilemap
-/// Any cell that has a tile in either tilemap is considered NOT walkable.
+/// Builds a grid graph from tilemaps for A* pathfinding.
+/// Any tile in the ground or wall tilemap is treated as non-walkable.
 /// </summary>
 public class GridGraphFromTilemap : MonoBehaviour
 {
-    // Tilemap containing ground/platform tiles. Presence of a ground tile marks cell as non-walkable.
-    [SerializeField] private Tilemap groundTilemap; // Ground / platforms
+    // Tilemap containing ground/platform tiles
+    [SerializeField] private Tilemap groundTilemap;
 
-    // Tilemap containing wall/obstacle tiles. Presence of a wall tile marks cell as non-walkable.
-    [SerializeField] private Tilemap wallTilemap;   // Walls / obstacles
+    // Tilemap containing walls or obstacles
+    [SerializeField] private Tilemap wallTilemap;
 
-    // Size used for gizmo drawing only.
+    // Size used only for gizmo visualization
     [SerializeField] private float cellSize = 1f;
 
     [SerializeField] private bool debugDrawGizmos = true;
 
     [Header("Agent padding")]
-    // How many cells to pad around obstacles so agents keep distance from walls.
+    // Extra blocked cells around walls so agents keep distance
     [SerializeField] private int obstaclePadding;
 
-    // Marks cells that originally had a wall tile (used as sources for padding).
+    // Marks cells that originally contained wall tiles
     private bool[,] _isWall;
 
-    // Grid nodes and dimensions
     private GridNode[,] _nodes;
     private int _width;
     private int _height;
 
-    // Minimum cell coordinate (xMin, yMin) of the combined tilemap bounds.
-    private Vector3Int _origin; // minimum cell coordinates (xMin, yMin)
+    // Minimum grid cell coordinate of the combined tilemap bounds
+    private Vector3Int _origin;
 
     private void Awake()
     {
         BuildFromTilemaps();
     }
 
-    // Build the grid covering the union of the two tilemaps.
-    // For each cell we compute world position, detect tiles and create GridNode.
+    /// <summary>
+    /// Generates the grid covering the union of both tilemaps.
+    /// </summary>
     private void BuildFromTilemaps()
     {
         if (groundTilemap == null && wallTilemap == null)
@@ -50,10 +48,8 @@ public class GridGraphFromTilemap : MonoBehaviour
             return;
         }
 
-        // Use any non-null tilemap for cell<->world conversions.
         Tilemap mainTilemap = groundTilemap != null ? groundTilemap : wallTilemap;
 
-        // Start from main tilemap bounds and expand to include the other tilemap.
         BoundsInt bounds = mainTilemap.cellBounds;
 
         if (groundTilemap != null)
@@ -75,7 +71,7 @@ public class GridGraphFromTilemap : MonoBehaviour
             {
                 Vector3Int cellPos = new Vector3Int(_origin.x + x, _origin.y + y, 0);
 
-                // World position = center of this cell
+                // Center position of this cell in world space
                 Vector3 worldPos = mainTilemap.GetCellCenterWorld(cellPos);
 
                 bool hasGround = groundTilemap != null && groundTilemap.HasTile(cellPos);
@@ -84,7 +80,7 @@ public class GridGraphFromTilemap : MonoBehaviour
                 if (hasWall)
                     _isWall[x, y] = true;
 
-                // Any tile in ground or wall => not walkable
+                // Any tile present means the cell is blocked
                 bool walkable = !(hasGround || hasWall);
 
                 _nodes[x, y] = new GridNode(
@@ -98,7 +94,9 @@ public class GridGraphFromTilemap : MonoBehaviour
         InflateObstacles();
     }
 
-    // Return a BoundsInt that covers both inputs (in cell coordinates).
+    /// <summary>
+    /// Returns bounds that cover both input bounds.
+    /// </summary>
     private BoundsInt Encapsulate(BoundsInt a, BoundsInt b)
     {
         int xMin = Mathf.Min(a.xMin, b.xMin);
@@ -112,12 +110,13 @@ public class GridGraphFromTilemap : MonoBehaviour
         );
     }
 
-    // Convert a world position to the corresponding GridNode (null if outside generated grid).
+    /// <summary>
+    /// Converts a world-space position to the corresponding grid node.
+    /// </summary>
     public GridNode GetNodeFromWorld(Vector2 worldPos)
     {
         if (_nodes == null) return null;
 
-        // convert world -> cell (using whichever tilemap is available)
         Tilemap mainTilemap = groundTilemap != null ? groundTilemap : wallTilemap;
         Vector3Int cell = mainTilemap.WorldToCell(worldPos);
 
@@ -141,10 +140,7 @@ public class GridGraphFromTilemap : MonoBehaviour
     public int Height => _height;
 
     /// <summary>
-    /// Expands non-walkable cells by 'obstaclePadding' cells in all directions.
-    /// Note: padding is applied around original wall tiles (_isWall). 
-    /// The local 'blocked' snapshot records currently non-walkable cells but is not used
-    /// for expansion in the current implementation (kept for possible future use).
+    /// Expands obstacles by obstaclePadding cells to keep agents away from walls.
     /// </summary>
     private void InflateObstacles()
     {
@@ -154,19 +150,6 @@ public class GridGraphFromTilemap : MonoBehaviour
         int w = _width;
         int h = _height;
 
-        // Snapshot of existing blocked cells (not currently used for expansion).
-        bool[,] blocked = new bool[w, h];
-
-        for (int x = 0; x < w; x++)
-        {
-            for (int y = 0; y < h; y++)
-            {
-                if (!_nodes[x, y].Walkable)
-                    blocked[x, y] = true;
-            }
-        }
-
-        // Expand obstacles around originally-walled cells so agents keep distance.
         for (int x = 0; x < w; x++)
         {
             for (int y = 0; y < h; y++)
@@ -190,7 +173,10 @@ public class GridGraphFromTilemap : MonoBehaviour
         }
     }
 
-    // Draw the grid in the editor: green = walkable, red = blocked.
+    /// <summary>
+    /// Draws the grid in the editor for debugging.
+    /// Green = walkable, Red = blocked.
+    /// </summary>
     private void OnDrawGizmosSelected()
     {
         if (!debugDrawGizmos || _nodes == null) return;
