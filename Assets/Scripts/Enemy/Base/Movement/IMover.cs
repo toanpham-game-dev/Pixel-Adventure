@@ -7,7 +7,9 @@ using UnityEngine;
 /// </summary>
 public interface IMover
 {
+    void MoveDirection(Vector2 direction);
     void MoveTowards(Vector2 target);
     void FollowPath(List<Vector2> path);
     void Stop();
+    float MoveSpeed { get; set; }
 }

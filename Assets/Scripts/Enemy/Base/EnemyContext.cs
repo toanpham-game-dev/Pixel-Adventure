@@ -8,8 +8,9 @@ public class EnemyContext
     public IPathfinder Pathfinder { get; }
     public float AttackRange { get; }
     public float ViewRange { get; }
+    public EnemyStatus Status { get; }
 
-    public EnemyContext(Transform self, Transform target, IMover mover, IPathfinder pathfinder, float attackRange, float viewRange)
+    public EnemyContext(Transform self, Transform target, IMover mover, IPathfinder pathfinder, float attackRange, float viewRange, EnemyStatus status)
     {
         Self = self;
         Target = target;
@@ -17,5 +18,6 @@ public class EnemyContext
         Pathfinder = pathfinder;
         AttackRange = attackRange;
         ViewRange = viewRange;
+        Status = status;
     }
 }

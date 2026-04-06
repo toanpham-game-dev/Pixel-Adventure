@@ -6,4 +6,6 @@ public interface IPlayerInput
     bool JumpUp { get; }
     bool JumpDown { get; }
     bool JumpHeld { get; }
+    void DisableInput();
+    void EnableInput();
 }

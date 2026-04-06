@@ -8,8 +8,8 @@ public abstract class EnemyBrain : MonoBehaviour
 {
     [Header("Refs")]
     [SerializeField] protected Transform target;
-    [SerializeField] protected MonoBehaviour pathfinderMono;
     protected IPathfinder Pathfinder;
+    [SerializeField] protected EnemyStatus status;
 
     [Header("AI Stats")]
     [SerializeField] protected float attackRange;
@@ -25,25 +25,30 @@ public abstract class EnemyBrain : MonoBehaviour
     protected virtual void Awake()
     {
         Mover = GetComponent<GridMover2D>();
-        Pathfinder = pathfinderMono as IPathfinder;
+        status = GetComponent<EnemyStatus>();
     }
 
     protected virtual void Start()
     {
-        // Build the shared context and create the root behavior node.
+        target = FindAnyObjectByType<PlayerController>().transform;
+
+        Pathfinder = FindAnyObjectByType<AStarPathfinder>();
+
         Context = new EnemyContext(
             transform,
             target,
             Mover,
             Pathfinder,
             attackRange,
-            viewRange);
+            viewRange,
+            status);
 
         RootNode = CreateBehaviorTree();
     }
 
     protected virtual void Update()
     {
+        Debug.Log(Context.Status.State);
         // Tick the behavior tree each frame while enabled.
         if (!Enabled || RootNode == null) return;
         RootNode.Tick(Context, Time.deltaTime);

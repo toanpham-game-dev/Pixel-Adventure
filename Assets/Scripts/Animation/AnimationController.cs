@@ -6,6 +6,7 @@ public class AnimationController : MonoBehaviour, IAnimationController
 {
     [SerializeField] private Animator _animator;
 
+    // Coroutine used for delayed animation transitions
     private Coroutine _transitionCoroutine;
 
     private void Awake()
@@ -14,11 +15,13 @@ public class AnimationController : MonoBehaviour, IAnimationController
     }
 
     /// <summary>
-    /// Plays the specified animation immediately.
+    /// Play an animation immediately.
+    /// Any running transition coroutine will be stopped.
     /// </summary>
-    /// <param name="animationName">Animation state name in Animator.</param>
     public void PlayAnimation(string animationName)
     {
+        if (!enabled) return;
+
         if (_transitionCoroutine != null)
         {
             StopCoroutine(_transitionCoroutine);
@@ -29,26 +32,34 @@ public class AnimationController : MonoBehaviour, IAnimationController
     }
 
     /// <summary>
-    /// Plays the first animation, then transitions to the next.
+    /// Play one animation, then automatically transition to another
+    /// after the first animation finishes.
     /// </summary>
-    /// <param name="firstAnim">First animation state name.</param>
-    /// <param name="nextAnim">Next animation state name.</param>
     public void PlayThenTransition(string firstAnim, string nextAnim)
     {
+        if (!enabled) return;
+
         if (_transitionCoroutine != null)
         {
             StopCoroutine(_transitionCoroutine);
         }
 
-        StartCoroutine(PlayThenTransitionRoutine(firstAnim, nextAnim));
+        _transitionCoroutine = StartCoroutine(
+            PlayThenTransitionRoutine(firstAnim, nextAnim)
+        );
     }
 
+    /// <summary>
+    /// Coroutine that waits for the first animation to finish
+    /// before playing the next animation.
+    /// </summary>
     private IEnumerator PlayThenTransitionRoutine(string firstAnim, string nextAnim)
     {
         _animator.Play(firstAnim);
+
+        // Wait one frame so Animator can update its state
         yield return null;
 
-        // Wait for the current animation to finish
         AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
         float waitTime = stateInfo.length;
 
