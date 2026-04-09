@@ -26,6 +26,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     // Air Jump
     private int _airJumpsLeft;
     private int _jumpsUsed;
+
+    // External Jump
+    private bool _isExternalJump;
+    private float _externalJumpTimer;
     #endregion
 
     #region INPUT PARAMETERS
@@ -57,6 +61,16 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     private void Update()
     {
         if (_playerController.state != PlayerState.Normal) return;
+
+        if (_isExternalJump)
+        {
+            _externalJumpTimer -= Time.deltaTime;
+
+            if (_externalJumpTimer <= 0)
+                _isExternalJump = false;
+
+            return;
+        }
 
         #region TIMERS
         LastOnGroundTime -= Time.deltaTime;
@@ -287,6 +301,25 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
         _playerController.RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
         _jumpsUsed++;
+        _playerController.Anim.PlayAnimation("Jump");
+    }
+
+    public void ExternalJump(float force)
+    {
+        _isExternalJump = true;
+        _externalJumpTimer = 0.2f;
+
+        _isJumpCut = false;
+        _isJumpFalling = false;
+
+        Vector2 vel = _playerController.RB.linearVelocity;
+
+        vel.y = 0;
+
+        _playerController.RB.linearVelocity = vel;
+
+        _playerController.RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+
         _playerController.Anim.PlayAnimation("Jump");
     }
 

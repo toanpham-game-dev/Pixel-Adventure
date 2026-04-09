@@ -30,6 +30,14 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Trap")
+        {
+            TakeDamage();
+        }
+    }
+
     public void TakeDamage()
     {
         if (_playerController.state != PlayerState.Normal) return;
