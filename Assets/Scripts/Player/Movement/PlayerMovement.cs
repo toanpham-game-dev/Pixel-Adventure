@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     public bool IsJumping { get; private set; }
     public bool IsWallJumping { get; private set; }
     public bool IsSliding { get; private set; }
+    public bool IsOnPlatform { get; set; }
 
     public float LastOnGroundTime { get; private set; }
     public float LastOnWallTime { get; private set; }
@@ -51,6 +52,8 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _wallLayer;
     #endregion
+
+    [SerializeField] public Rigidbody2D platformRb;
 
     private void Start()
     {
@@ -257,6 +260,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     #region RUN METHODS
     private void Run(float lerpAmount)
     {
+        float platformVelocity = (IsOnPlatform && platformRb != null) ? platformRb.linearVelocity.x : 0f;
+
+        float relativeVelocity = _playerController.RB.linearVelocity.x - platformVelocity;
+
         float targetSpeed = _playerController.Input.Move * _playerController.Data.runMaxSpeed;
 
         float accelRate = (LastOnGroundTime > 0)
@@ -275,9 +282,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
             accelRate = 0;
         }
 
-        float speedDif = targetSpeed - _playerController.RB.linearVelocity.x;
+        float speedDif = targetSpeed - relativeVelocity;
         float movement = speedDif * accelRate;
-        _playerController.RB.AddForce(movement * Vector2.right, ForceMode2D.Force);  
+        _playerController.RB.AddForce(movement * Vector2.right, ForceMode2D.Force);
     }
 
     private void Turn()

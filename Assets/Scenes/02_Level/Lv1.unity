@@ -12687,6 +12687,7 @@ MonoBehaviour:
   _wallLayer:
     serializedVersion: 2
     m_Bits: 64
+  platformRb: {fileID: 0}
 --- !u!114 &1108643180
 MonoBehaviour:
   m_ObjectHideFlags: 0
