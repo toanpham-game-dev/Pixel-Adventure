@@ -16,6 +16,10 @@
 *.blend1
 *.blend1.meta
 
+# Firebase large binaries
+Assets/Firebase/Plugins/x86_64/
+Assets/Firebase/Plugins/x86/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/

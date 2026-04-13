@@ -42,6 +42,15 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
     {
         if (_playerController.state != PlayerState.Normal) return;
 
+        _playerController.Health.DecreaseHealth(1);
+
+        if (_playerController.Health.CurrentHealth <= 0)
+        {
+            Debug.Log("Die");
+            StartCoroutine(Die());
+            return;
+        }
+
         _playerController.state = PlayerState.Hit;
 
         _playerController.Anim.PlayAnimation("Hit");
@@ -57,6 +66,19 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
         rb.linearVelocity = velocity;
     }
 
+    private IEnumerator Die()
+    {
+        _playerController.state = PlayerState.Dead;
+
+        _playerController.Input.DisableInput();
+
+        _playerController.Anim.PlayAnimation("Desappearing");
+
+        yield return new WaitForSeconds(0.5f);
+
+        GameManager.Instance.GameOver();
+    }
+
     private IEnumerator Respawn()
     {
         _playerController.Input.DisableInput();
@@ -64,8 +86,6 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
         {
             col.enabled = false;
         }
-
-        _playerController.Health.DecreaseHealth(1);
 
         // Knockback
         float dir = Random.value < 0.5f ? -1f : 1f;

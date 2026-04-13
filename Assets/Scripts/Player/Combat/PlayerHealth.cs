@@ -22,19 +22,6 @@ public class PlayerHealth : MonoBehaviour, IPlayerHealth
         _currentHealth = _maxHealth;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            DecreaseHealth(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            IncreaseHealth(1);
-        }
-    }
-
     public void IncreaseHealth(int amount)
     {
         _currentHealth += amount;

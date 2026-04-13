@@ -4,9 +4,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] private int _levelIndex;
-    [SerializeField] private int _starEarned;
-
     private void Awake()
     {
         if (Instance == null)
@@ -20,23 +17,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    public void GameOver()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            CompleteLevel(_levelIndex, _starEarned);
-        }
-
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            ResetProgress();
-        }
+        SceneLoader.Instance.LoadAdditionalScene("Over");
     }
 
     public void CompleteLevel(int levelIndex, int starEarned)
     {
         int oldStar = PlayerPrefs.GetInt("LevelStar_" + levelIndex, 0);
-
         int finalStar = Mathf.Max(oldStar, starEarned);
 
         PlayerPrefs.SetInt("LevelStar_" + levelIndex, finalStar);
@@ -50,12 +38,28 @@ public class GameManager : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        Debug.Log($"Level {levelIndex} completed with {finalStar} stars");
+        Debug.Log($"Level {levelIndex} = {finalStar} star");
+
+        SaveToCloud();
+    }
+
+    private async void SaveToCloud()
+    {
+        if (FirebaseManager.Instance == null) return;
+
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            return;
+        }
+
+        CloudSaveData data = FirebaseManager.Instance.GetLocalData();
+
+        await FirebaseManager.Instance.SaveCloudData(data);
     }
 
     public void ResetProgress()
     {
         PlayerPrefs.DeleteAll();
-        Debug.Log("Progress Reset");
+        Debug.Log("Reset Progress");
     }
 }

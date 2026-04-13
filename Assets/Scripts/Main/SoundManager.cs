@@ -27,11 +27,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        Debug.Log(PlayerPrefs.GetFloat("MasterVolume"));
-    }
-
     void LoadSettings()
     {
         masterVolume = PlayerPrefs.GetFloat("MasterVolume", 1f);
