@@ -242,6 +242,7 @@ public class FirebaseManager : MonoBehaviour
             GoogleSignIn.Configuration = new GoogleSignInConfiguration
             {
                 RequestIdToken = true,
+                RequestEmail = true,
                 WebClientId = "1055467947637-p6bfhcsdvne5ak0tel7dj4hahl7taf2k.apps.googleusercontent.com"
             };
 
