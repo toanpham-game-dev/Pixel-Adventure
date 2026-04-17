@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
         SaveToCloud();
     }
 
+#if UNITY_ANDROID
     private async void SaveToCloud()
     {
         if (FirebaseManager.Instance == null) return;
@@ -62,6 +63,12 @@ public class GameManager : MonoBehaviour
 
         await FirebaseManager.Instance.SaveCloudData(data);
     }
+#else
+    private void SaveToCloud()
+    {
+        // Do nothing on PC
+    }
+#endif
 
     public void ResetProgress()
     {

@@ -21,9 +21,6 @@ public class FirebaseManager : MonoBehaviour
     public bool IsDataLoaded { get; private set; }
     public bool IsInitialized { get; private set; }
 
-    [Header("Debug")]
-    [SerializeField] private bool forceLogoutInEditor = true;
-
     private void Awake()
     {
         if (Instance == null)
@@ -37,19 +34,18 @@ public class FirebaseManager : MonoBehaviour
         }
     }
 
+#if UNITY_ANDROID
     private async void Start()
     {
         await InitFirebase();
-
         ForceLogoutLocal();
-
-        //#if UNITY_EDITOR
-        //        if (forceLogoutInEditor)
-        //        {
-        //            ForceLogoutLocal();
-        //        }
-        //#endif
     }
+#else
+    private void Start()
+    {
+        Debug.Log("Firebase disabled (not Android)");
+    }
+#endif
 
     // ================= INIT =================
     private async Task InitFirebase()
@@ -79,6 +75,7 @@ public class FirebaseManager : MonoBehaviour
     }
 
     // ================= AUTO LOGIN =================
+#if UNITY_ANDROID
     public async void AutoLogin()
     {
         if (!IsInitialized) await InitFirebase();
@@ -91,8 +88,15 @@ public class FirebaseManager : MonoBehaviour
             await LoadOrCreateData();
         }
     }
+#else
+    public void AutoLogin()
+    {
+        Debug.Log("Auto login skipped (not Android)");
+    }
+#endif
 
     // ================= GUEST LOGIN =================
+#if UNITY_ANDROID
     public async void OnGuestLogin()
     {
         if (!IsInitialized) await InitFirebase();
@@ -111,6 +115,12 @@ public class FirebaseManager : MonoBehaviour
             Debug.LogError("Login fail: " + e.Message);
         }
     }
+#else
+    public void OnGuestLogin()
+    {
+        Debug.Log("Guest login disabled (not Android)");
+    }
+#endif
 
     // ================= LOAD / CREATE DATA =================
     private async Task LoadOrCreateData()
@@ -221,6 +231,7 @@ public class FirebaseManager : MonoBehaviour
     }
 
     // ================= GOOGLE LOGIN BUTTON =================
+#if UNITY_ANDROID
     public async void OnGoogleLogin()
     {
         var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
@@ -233,6 +244,12 @@ public class FirebaseManager : MonoBehaviour
             await LoginWithGoogle();
         }
     }
+#else
+    public void OnGoogleLogin()
+    {
+        Debug.Log("Google login disabled (not Android)");
+    }
+#endif
 
     public async Task LoginWithGoogle()
     {

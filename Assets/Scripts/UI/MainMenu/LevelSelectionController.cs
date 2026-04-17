@@ -5,6 +5,7 @@ public class LevelSelectionController : MonoBehaviour
     public LevelItem[] levels;
     public AudioClip buttonSound;
 
+#if UNITY_ANDROID
     private void OnEnable()
     {
         if (FirebaseManager.Instance != null)
@@ -12,6 +13,9 @@ public class LevelSelectionController : MonoBehaviour
             FirebaseManager.Instance.OnDataLoaded += UpdateLevelPanel;
         }
     }
+#else
+    private void OnEnable() { }
+#endif
 
     private void Start()
     {
