@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 4355534331643306002}
   - component: {fileID: 4976438287771567812}
   - component: {fileID: 1602727133157075891}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: BlueBird
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridMover2D
   _moveSpeed: 0
+  _movementType: 0
 --- !u!114 &18322659595982622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BlueBirdStatus
   _rb: {fileID: 0}
-  _col: {fileID: 0}
+  _cols: []
   _blueBirdBrain: {fileID: 0}
   _headTrigger: {fileID: 4063111426402632382}
   _horizontalForce: 8
@@ -323,7 +324,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4857661539570397699}
   - component: {fileID: 5330798388952694231}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head Trigger
   m_TagString: EnemyHead
   m_Icon: {fileID: 0}

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4840937716566010343}
   - component: {fileID: 1405449308673689733}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head Trigger
   m_TagString: EnemyHead
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 7916442117162692953}
   - component: {fileID: 5706767028475456218}
   - component: {fileID: -5689346378401851685}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bat
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -277,6 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridMover2D
   _moveSpeed: 5
+  _movementType: 0
 --- !u!114 &1436890955065253158
 MonoBehaviour:
   m_ObjectHideFlags: 0

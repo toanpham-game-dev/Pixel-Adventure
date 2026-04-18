@@ -36,6 +36,15 @@ public class ChickenStatus : EnemyStatus, IEnemyHit
         if (State == EnemyState.Dead)
             return;
 
+        if (State == EnemyState.Idle)
+        {
+            _anim.PlayAnimation("Idle");
+        }
+
+        if (State == EnemyState.Chase)
+        {
+            _anim.PlayAnimation("Run");
+        }
         HandleFlip();
     }
 

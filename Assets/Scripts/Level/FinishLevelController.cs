@@ -5,9 +5,6 @@ using UnityEngine.SceneManagement;
 public class FinishLevelController : MonoBehaviour
 {
     private AnimationController _anim;
-    private PlayerController _player;
-    [SerializeField] private float _jumpForce;
-    [SerializeField] private float _desappearDelayTime;
 
     [Header("Level Config")]
     [SerializeField] private int _levelIndex;
@@ -25,24 +22,15 @@ public class FinishLevelController : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             _anim.PlayAnimation("Idle");
-            _player = collision.gameObject.GetComponent<PlayerController>();
-        }
-    }
-
-    public void FinishLevel()
-    {
-        if (_player != null)
-        {
-            _player.Movement.ExternalJump(_jumpForce);
-            StartCoroutine(FinishDesappear());
-            GameManager.Instance.CompleteLevel(_levelIndex, _player.Health.CurrentHealth);
+            PlayerController player  = collision.gameObject.GetComponent<PlayerController>();
+            Collider2D[] cols = collision.GetComponents<Collider2D>();
+            if (player == null || cols == null) return;
+            foreach (Collider2D col in cols)
+            {
+                col.enabled = false;
+            }
+            GameManager.Instance.CompleteLevel(_levelIndex, player.Health.CurrentHealth);
             SceneLoader.Instance.LoadAdditionalScene("Win");
         }
-    }
-
-    IEnumerator FinishDesappear()
-    {
-        yield return new WaitForSeconds(_desappearDelayTime);
-        _player.Desappear();
     }
 }

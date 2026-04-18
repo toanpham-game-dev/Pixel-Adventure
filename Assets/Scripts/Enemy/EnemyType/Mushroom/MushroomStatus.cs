@@ -3,7 +3,7 @@ using UnityEngine;
 public class MushroomStatus : EnemyStatus, IEnemyHit
 {
     [SerializeField] private MushroomBrain _mushroomBrain;
-    private Collider2D _col;
+    private Collider2D[] _cols;
     private Rigidbody2D _rb;
     private IAnimationController _anim;
 
@@ -16,7 +16,7 @@ public class MushroomStatus : EnemyStatus, IEnemyHit
     {
         _anim = GetComponent<IAnimationController>();
         _mushroomBrain = GetComponent<MushroomBrain>();
-        _col = GetComponent<Collider2D>();
+        _cols = GetComponents<Collider2D>();
         _rb = GetComponent<Rigidbody2D>();
     }
 
@@ -49,7 +49,10 @@ public class MushroomStatus : EnemyStatus, IEnemyHit
 
     private void OnDead()
     {
-        _col.enabled = false;
+        foreach (var col in _cols)
+        {
+            col.enabled = false;
+        }
         _mushroomBrain.enabled = false;
 
         float dir = Random.value < 0.5f ? -1f : 1f;

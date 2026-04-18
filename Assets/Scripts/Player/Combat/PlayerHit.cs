@@ -46,7 +46,6 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
 
         if (_playerController.Health.CurrentHealth <= 0)
         {
-            Debug.Log("Die");
             StartCoroutine(Die());
             return;
         }

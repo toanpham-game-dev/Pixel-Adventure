@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3489062920231817972}
   - component: {fileID: 6756944534746213951}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head Trigger
   m_TagString: EnemyHead
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 7858778873666587571}
   - component: {fileID: 3165948972096636331}
   - component: {fileID: 6964179433189442495}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Mushroom
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -384,3 +384,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GridMover2D
   _moveSpeed: 0
+  _movementType: 0

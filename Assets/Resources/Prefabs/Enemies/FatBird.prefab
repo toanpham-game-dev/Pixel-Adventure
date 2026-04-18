@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5212316391349198463}
   - component: {fileID: 1934207855319332868}
   - component: {fileID: 889038288120363791}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FatBird
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -313,7 +313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 587172451307370227}
   - component: {fileID: 6761932878527118745}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head Trigger
   m_TagString: EnemyHead
   m_Icon: {fileID: 0}

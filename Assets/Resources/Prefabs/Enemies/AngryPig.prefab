@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6304147003354804206}
   - component: {fileID: 1355754560580043415}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Head Trigger
   m_TagString: EnemyHead
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 3789205080342205090}
   - component: {fileID: 8050270239685439788}
   - component: {fileID: 3970406677675959966}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: AngryPig
   m_TagString: Enemy
   m_Icon: {fileID: 0}

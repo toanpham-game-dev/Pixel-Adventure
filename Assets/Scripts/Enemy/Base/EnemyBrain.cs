@@ -49,7 +49,6 @@ public abstract class EnemyBrain : MonoBehaviour
 
     protected virtual void Update()
     {
-        Debug.Log(Context.Status.State);
         // Tick the behavior tree each frame while enabled.
         if (!Enabled || RootNode == null) return;
         RootNode.Tick(Context, Time.deltaTime);
@@ -62,6 +61,9 @@ public abstract class EnemyBrain : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, viewRange);
+
         if (!Application.isPlaying)
             return;
 

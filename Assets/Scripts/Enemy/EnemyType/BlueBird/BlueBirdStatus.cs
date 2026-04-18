@@ -4,7 +4,7 @@ public class BlueBirdStatus : EnemyStatus, IEnemyHit
 {
     [SerializeField] private IAnimationController _anim;
     [SerializeField] private Rigidbody2D _rb;
-    [SerializeField] private Collider2D _col;
+    [SerializeField] private Collider2D[] _cols;
     [SerializeField] private BlueBirdBrain _blueBirdBrain;
     [Header("Hit Config")]
     [SerializeField] private GameObject _headTrigger;
@@ -15,7 +15,7 @@ public class BlueBirdStatus : EnemyStatus, IEnemyHit
     {
         _anim = GetComponent<AnimationController>();
         _rb = GetComponent<Rigidbody2D>();
-        _col = GetComponent<Collider2D>();
+        _cols = GetComponents<Collider2D>();
         _blueBirdBrain = GetComponent<BlueBirdBrain>();
     }
 
@@ -30,7 +30,10 @@ public class BlueBirdStatus : EnemyStatus, IEnemyHit
 
     private void OnDead()
     {
-        _col.enabled = false;
+        foreach (var col in _cols)
+        {
+            col.enabled = false;
+        }
         _blueBirdBrain.enabled = false;
 
         float dir = Random.value < 0.5f ? -1f : 1f;
