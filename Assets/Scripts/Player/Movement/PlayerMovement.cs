@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     public bool IsJumping { get; private set; }
     public bool IsWallJumping { get; private set; }
     public bool IsSliding { get; private set; }
+    public bool IsOnPlatform { get; set; }
 
     public float LastOnGroundTime { get; private set; }
     public float LastOnWallTime { get; private set; }
@@ -26,6 +27,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     // Air Jump
     private int _airJumpsLeft;
     private int _jumpsUsed;
+
+    // External Jump
+    private bool _isExternalJump;
+    private float _externalJumpTimer;
     #endregion
 
     #region INPUT PARAMETERS
@@ -48,6 +53,8 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     [SerializeField] private LayerMask _wallLayer;
     #endregion
 
+    [SerializeField] public Rigidbody2D platformRb;
+
     private void Start()
     {
         SetGravityScale(_playerController.Data.gravityScale);
@@ -57,6 +64,16 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     private void Update()
     {
         if (_playerController.state != PlayerState.Normal) return;
+
+        if (_isExternalJump)
+        {
+            _externalJumpTimer -= Time.deltaTime;
+
+            if (_externalJumpTimer <= 0)
+                _isExternalJump = false;
+
+            return;
+        }
 
         #region TIMERS
         LastOnGroundTime -= Time.deltaTime;
@@ -243,6 +260,10 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
     #region RUN METHODS
     private void Run(float lerpAmount)
     {
+        float platformVelocity = (IsOnPlatform && platformRb != null) ? platformRb.linearVelocity.x : 0f;
+
+        float relativeVelocity = _playerController.RB.linearVelocity.x - platformVelocity;
+
         float targetSpeed = _playerController.Input.Move * _playerController.Data.runMaxSpeed;
 
         float accelRate = (LastOnGroundTime > 0)
@@ -261,9 +282,9 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
             accelRate = 0;
         }
 
-        float speedDif = targetSpeed - _playerController.RB.linearVelocity.x;
+        float speedDif = targetSpeed - relativeVelocity;
         float movement = speedDif * accelRate;
-        _playerController.RB.AddForce(movement * Vector2.right, ForceMode2D.Force);  
+        _playerController.RB.AddForce(movement * Vector2.right, ForceMode2D.Force);
     }
 
     private void Turn()
@@ -287,6 +308,25 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 
         _playerController.RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
         _jumpsUsed++;
+        _playerController.Anim.PlayAnimation("Jump");
+    }
+
+    public void ExternalJump(float force)
+    {
+        _isExternalJump = true;
+        _externalJumpTimer = 0.2f;
+
+        _isJumpCut = false;
+        _isJumpFalling = false;
+
+        Vector2 vel = _playerController.RB.linearVelocity;
+
+        vel.y = 0;
+
+        _playerController.RB.linearVelocity = vel;
+
+        _playerController.RB.AddForce(Vector2.up * force, ForceMode2D.Impulse);
+
         _playerController.Anim.PlayAnimation("Jump");
     }
 

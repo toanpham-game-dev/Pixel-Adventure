@@ -9,7 +9,7 @@ public class BatStatus : EnemyStatus, IEnemyHit
 
     private SpriteRenderer _spriteRenderer;
     private Rigidbody2D _rb;
-    private Collider2D _col;
+    private Collider2D[] _cols;
     private IAnimationController _anim;
 
     [SerializeField] private BatBrain _batBrain;
@@ -23,7 +23,7 @@ public class BatStatus : EnemyStatus, IEnemyHit
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _anim = GetComponent<IAnimationController>();
         _batBrain = GetComponent<BatBrain>();
-        _col = GetComponent<Collider2D>();
+        _cols = GetComponents<Collider2D>();
     }
 
     private void Start()
@@ -90,7 +90,10 @@ public class BatStatus : EnemyStatus, IEnemyHit
 
     private void OnDead()
     {
-        _col.enabled = false;
+        foreach (var col in _cols)
+        {
+            col.enabled = false;
+        }
         _batBrain.enabled = false;
 
         float dir = Random.value < 0.5f ? -1f : 1f;

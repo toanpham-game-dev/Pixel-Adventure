@@ -1,8 +1,12 @@
 using DG.Tweening;
 using UnityEngine;
-
+using System.Collections;
 public class MainMenuController : MonoBehaviour
 {
+    [Header("Login UI")]
+    public GameObject loginPanel;
+    public GameObject loadingPanel;
+
     [Header("Panels")]
     public GameObject mainMenuPanel;
     public GameObject levelSelectPanel;
@@ -29,7 +33,28 @@ public class MainMenuController : MonoBehaviour
 
     private void Start()
     {
+        levelSelectPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+
+        StartCoroutine(CheckLoginWhenReady());
+    }
+
+    private void OnLoginSuccess()
+    {
+        loadingPanel.SetActive(false);
+        loginPanel.SetActive(false);
+
         OpenMainMenu();
+    }
+
+    public void OnGuestLoginClick()
+    {
+        loadingPanel.SetActive(true);
+
+        FirebaseManager.Instance.OnDataLoaded -= OnLoginSuccess;
+        FirebaseManager.Instance.OnDataLoaded += OnLoginSuccess;
+
+        FirebaseManager.Instance.OnGuestLogin();
     }
 
     private void SaveMenuPositions()
@@ -45,12 +70,9 @@ public class MainMenuController : MonoBehaviour
     public void ExitGame()
     {
         Application.Quit();
-        Debug.Log("Exit Game");
     }
 
-    // =========================
-    // MAIN MENU
-    // =========================
+    // ================= MAIN MENU =================
 
     public void OpenMainMenu()
     {
@@ -66,13 +88,11 @@ public class MainMenuController : MonoBehaviour
             RectTransform panel = menuChildPanels[i];
 
             panel.DOKill();
-
             panel.anchoredPosition = menuStartPositions[i] + new Vector2(-300, 0);
 
             panel.DOAnchorPos(menuStartPositions[i], 0.4f)
                 .SetEase(Ease.OutCubic)
-                .SetDelay(delay)
-                .SetLink(panel.gameObject);
+                .SetDelay(delay);
 
             delay += 0.08f;
         }
@@ -92,8 +112,7 @@ public class MainMenuController : MonoBehaviour
 
             panel.DOAnchorPos(menuStartPositions[i] + new Vector2(-300, 0), 0.3f)
                 .SetEase(Ease.InCubic)
-                .SetDelay(delay)
-                .SetLink(panel.gameObject);
+                .SetDelay(delay);
 
             delay += 0.05f;
         }
@@ -104,9 +123,7 @@ public class MainMenuController : MonoBehaviour
         });
     }
 
-    // =========================
-    // SETTINGS
-    // =========================
+    // ================= SETTINGS =================
 
     public void OpenSettings()
     {
@@ -117,13 +134,9 @@ public class MainMenuController : MonoBehaviour
 
         foreach (RectTransform panel in settingsChildPanels)
         {
-            panel.DOKill();
-
             panel.localScale = Vector3.zero;
 
-            panel.DOScale(1f, 0.35f)
-                .SetEase(Ease.OutBack)
-                .SetLink(panel.gameObject);
+            panel.DOScale(1f, 0.35f).SetEase(Ease.OutBack);
         }
     }
 
@@ -133,11 +146,7 @@ public class MainMenuController : MonoBehaviour
 
         foreach (RectTransform panel in settingsChildPanels)
         {
-            panel.DOKill();
-
-            panel.DOScale(0f, 0.25f)
-                .SetEase(Ease.InBack)
-                .SetLink(panel.gameObject);
+            panel.DOScale(0f, 0.25f).SetEase(Ease.InBack);
         }
 
         DOVirtual.DelayedCall(0.25f, () =>
@@ -146,9 +155,7 @@ public class MainMenuController : MonoBehaviour
         });
     }
 
-    // =========================
-    // LEVEL SELECTION
-    // =========================
+    // ================= LEVEL =================
 
     public void OpenLevelSelection()
     {
@@ -159,13 +166,9 @@ public class MainMenuController : MonoBehaviour
 
         foreach (RectTransform panel in levelChildPanels)
         {
-            panel.DOKill();
-
             panel.localScale = Vector3.zero;
 
-            panel.DOScale(1f, 0.35f)
-                .SetEase(Ease.OutBack)
-                .SetLink(panel.gameObject);
+            panel.DOScale(1f, 0.35f).SetEase(Ease.OutBack);
         }
     }
 
@@ -175,16 +178,36 @@ public class MainMenuController : MonoBehaviour
 
         foreach (RectTransform panel in levelChildPanels)
         {
-            panel.DOKill();
-
-            panel.DOScale(0f, 0.25f)
-                .SetEase(Ease.InBack)
-                .SetLink(panel.gameObject);
+            panel.DOScale(0f, 0.25f).SetEase(Ease.InBack);
         }
 
         DOVirtual.DelayedCall(0.25f, () =>
         {
             levelSelectPanel.SetActive(false);
         });
+    }
+
+    private IEnumerator CheckLoginWhenReady()
+    {
+        yield return new WaitUntil(() =>
+            FirebaseManager.Instance != null &&
+            FirebaseManager.Instance.IsInitialized
+        );
+
+        if (FirebaseManager.Instance.IsLoggedIn())
+        {
+            loginPanel.SetActive(false);
+            loadingPanel.SetActive(true);
+
+            FirebaseManager.Instance.OnDataLoaded -= OnLoginSuccess;
+            FirebaseManager.Instance.OnDataLoaded += OnLoginSuccess;
+
+            FirebaseManager.Instance.AutoLogin();
+        }
+        else
+        {
+            loginPanel.SetActive(true);
+            loadingPanel.SetActive(false);
+        }
     }
 }

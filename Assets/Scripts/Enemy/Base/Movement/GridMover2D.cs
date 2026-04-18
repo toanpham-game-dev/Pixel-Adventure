@@ -10,6 +10,10 @@ public class GridMover2D : MonoBehaviour, IMover
     // Movement speed (units per second)
     [SerializeField] private float _moveSpeed;
 
+    // Types of movement
+    [SerializeField] private MovementType _movementType;
+
+
     // Cached Rigidbody2D for physics-based movement
     private Rigidbody2D _rb;
 
@@ -39,8 +43,17 @@ public class GridMover2D : MonoBehaviour, IMover
     // Move directly towards a single target position
     public void MoveTowards(Vector2 target)
     {
-        Vector2 dir = (target - _rb.position).normalized;
-        _rb.linearVelocity = dir * _moveSpeed;
+        Vector2 dir = target - _rb.position;
+
+        if (_movementType == MovementType.Ground)
+            dir.y = 0f;
+
+        dir = dir.normalized;
+
+        if (_movementType == MovementType.Ground)
+            _rb.linearVelocity = new Vector2(dir.x * _moveSpeed, _rb.linearVelocity.y);
+        else
+            _rb.linearVelocity = dir * _moveSpeed;
     }
 
     // Follow an ordered list of world-space waypoints

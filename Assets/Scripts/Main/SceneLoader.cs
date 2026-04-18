@@ -6,6 +6,8 @@ public class SceneLoader : MonoBehaviour
 {
     public static SceneLoader Instance;
 
+    private AnimationController _anim;
+
     private void Awake()
     {
         if (Instance == null)
@@ -17,11 +19,13 @@ public class SceneLoader : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        _anim = GetComponent<AnimationController>();
     }
 
     public void LoadMainMenuScene()
     {
-        SceneManager.LoadSceneAsync("MainMenu", LoadSceneMode.Single);
+        StartCoroutine(LoadSceneWithTransition("MainMenu"));
     }
 
     public void ReloadScene()
@@ -32,25 +36,57 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadLevel(string levelScene)
     {
-        StartCoroutine(LoadLevelRoutine(levelScene));
+        StartCoroutine(LoadSceneWithTransition(levelScene, loadHUD: true));
     }
 
-    IEnumerator LoadLevelRoutine(string levelScene)
+    private IEnumerator LoadSceneWithTransition(string sceneName, bool loadHUD = false)
     {
-        // Load level
-        yield return SceneManager.LoadSceneAsync(levelScene, LoadSceneMode.Single);
+        _anim.PlayAnimation("WipeOut");
+        yield return new WaitForSeconds(0.5f);
 
-        // Load HUD
-        yield return SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
+        AsyncOperation op = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        op.allowSceneActivation = false;
+
+        while (op.progress < 0.9f)
+        {
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        op.allowSceneActivation = true;
+
+        while (!op.isDone)
+        {
+            yield return null;
+        }
+
+        if (loadHUD)
+        {
+            yield return SceneManager.LoadSceneAsync("HUD", LoadSceneMode.Additive);
+        }
+
+        _anim.PlayAnimation("WipeIn");
     }
+
 
     public void LoadAdditionalScene(string sceneName)
     {
-        SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        StartCoroutine(LoadAdditionalRoutine(sceneName));
+    }
+
+    private IEnumerator LoadAdditionalRoutine(string sceneName)
+    {
+        yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
     }
 
     public void CloseAdditionalScene(string sceneName)
     {
-        SceneManager.UnloadSceneAsync(sceneName);
+        StartCoroutine(CloseAdditionalRoutine(sceneName));
+    }
+
+    private IEnumerator CloseAdditionalRoutine(string sceneName)
+    {
+        yield return SceneManager.UnloadSceneAsync(sceneName);
     }
 }

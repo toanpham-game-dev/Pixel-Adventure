@@ -9,11 +9,11 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
     [SerializeField] private PlayerController _playerController;
 
     private Rigidbody2D _rb;
-    private Collider2D _col;
+    private Collider2D[] _cols;
 
     private void Awake()
     {
-        _col = GetComponent<Collider2D>();
+        _cols = GetComponents<Collider2D>();
         _rb = GetComponent<Rigidbody2D>();
     }
 
@@ -30,9 +30,25 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
         }
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Trap")
+        {
+            TakeDamage();
+        }
+    }
+
     public void TakeDamage()
     {
         if (_playerController.state != PlayerState.Normal) return;
+
+        _playerController.Health.DecreaseHealth(1);
+
+        if (_playerController.Health.CurrentHealth <= 0)
+        {
+            StartCoroutine(Die());
+            return;
+        }
 
         _playerController.state = PlayerState.Hit;
 
@@ -49,12 +65,26 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
         rb.linearVelocity = velocity;
     }
 
+    private IEnumerator Die()
+    {
+        _playerController.state = PlayerState.Dead;
+
+        _playerController.Input.DisableInput();
+
+        _playerController.Anim.PlayAnimation("Desappearing");
+
+        yield return new WaitForSeconds(0.5f);
+
+        GameManager.Instance.GameOver();
+    }
+
     private IEnumerator Respawn()
     {
         _playerController.Input.DisableInput();
-        _col.enabled = false;
-
-        _playerController.Health.DecreaseHealth(1);
+        foreach (var col in _cols)
+        {
+            col.enabled = false;
+        }
 
         // Knockback
         float dir = Random.value < 0.5f ? -1f : 1f;
@@ -78,6 +108,9 @@ public class PlayerHit : MonoBehaviour, IPlayerHit
 
         _playerController.Anim.PlayAnimation("Appearing");
 
-        _col.enabled = true;
+        foreach (var col in _cols)
+        {
+            col.enabled = true;
+        }
     }
 }

@@ -4,9 +4,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    [SerializeField] private int _levelIndex;
-    [SerializeField] private int _starEarned;
-
     private void Awake()
     {
         if (Instance == null)
@@ -20,23 +17,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void Start()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            CompleteLevel(_levelIndex, _starEarned);
-        }
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+    }
 
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            ResetProgress();
-        }
+    public void GameOver()
+    {
+        SceneLoader.Instance.LoadAdditionalScene("Over");
     }
 
     public void CompleteLevel(int levelIndex, int starEarned)
     {
         int oldStar = PlayerPrefs.GetInt("LevelStar_" + levelIndex, 0);
-
         int finalStar = Mathf.Max(oldStar, starEarned);
 
         PlayerPrefs.SetInt("LevelStar_" + levelIndex, finalStar);
@@ -50,12 +44,35 @@ public class GameManager : MonoBehaviour
 
         PlayerPrefs.Save();
 
-        Debug.Log($"Level {levelIndex} completed with {finalStar} stars");
+        Debug.Log($"Level {levelIndex} = {finalStar} star");
+
+        SaveToCloud();
     }
+
+#if UNITY_ANDROID
+    private async void SaveToCloud()
+    {
+        if (FirebaseManager.Instance == null) return;
+
+        if (Application.internetReachability == NetworkReachability.NotReachable)
+        {
+            return;
+        }
+
+        CloudSaveData data = FirebaseManager.Instance.GetLocalData();
+
+        await FirebaseManager.Instance.SaveCloudData(data);
+    }
+#else
+    private void SaveToCloud()
+    {
+        // Do nothing on PC
+    }
+#endif
 
     public void ResetProgress()
     {
         PlayerPrefs.DeleteAll();
-        Debug.Log("Progress Reset");
+        Debug.Log("Reset Progress");
     }
 }

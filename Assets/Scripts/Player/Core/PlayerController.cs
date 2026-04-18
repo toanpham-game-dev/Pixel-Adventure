@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour
     public IPlayerInput Input => _input;
     public IPlayerHealth Health => _health;
     public IAnimationController Anim => _anim;
+    public IPlayerMovement Movement => _movement;
     public Rigidbody2D RB => _rb;
     public PlayerData Data => playerData;
 
@@ -78,6 +79,7 @@ public class PlayerController : MonoBehaviour
     public void Appear()
     {
         _input.DisableInput();
+        _rb.bodyType = RigidbodyType2D.Kinematic;
         StartCoroutine(SpawnDelay());
     }
 
@@ -90,6 +92,16 @@ public class PlayerController : MonoBehaviour
     {
         _anim.PlayAnimation("Desappearing");
         _input.DisableInput();
+    }
+
+    public void ShowPlayerSprite()
+    {
+        _spriteRenderer.enabled = true;
+    }
+
+    public void HidePlayerSprite()
+    {
+        _spriteRenderer.enabled = false;
     }
 
     IEnumerator SpawnDelay()
@@ -118,6 +130,7 @@ public class PlayerController : MonoBehaviour
     public void FinishAppear()
     {
         _input.EnableInput();
+        _rb.bodyType = RigidbodyType2D.Dynamic;
         _animationController.enabled = true;
         _anim.PlayAnimation("Idle");
 

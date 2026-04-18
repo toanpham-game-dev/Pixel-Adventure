@@ -2,27 +2,23 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// Behavior Tree action node that makes the enemy (e.g. Bat)
-/// continuously chase the target using A* pathfinding.
-/// 
-/// - Periodically recalculates a path (repath interval)
-/// - Follows waypoints using IMover
-/// - Always returns Running while chasing
-/// - Returns Failure only if no path can be found or dependencies are missing
+/// Behavior Tree node that makes enemy chase target using A* pathfinding.
+/// Includes smoothing and waypoint skipping to avoid zig-zag movement.
 /// </summary>
 public class ActionMoveToTarget : IBehaviorNode
 {
-    private const float REPATH_INTERVAL = 0.3f;        // How often to recalc A*
-    private const float WAYPOINT_REACH_RADIUS = 0.1f;  // Distance to consider a waypoint "reached"
+    private const float REPATH_INTERVAL = 0.6f;
+    private const float WAYPOINT_REACH_RADIUS = 0.35f;
+    private const float TARGET_MOVE_THRESHOLD = 0.5f;
 
-    private float _repathTimer = 0f;
+    private float _repathTimer;
     private List<Vector2> _currentPath;
     private int _currentIndex;
 
+    private Vector2 _lastTargetPos;
+
     public NodeState Tick(EnemyContext context, float deltaTime)
     {
-        Debug.Log("Target: " + context.Target + " | Path: " + context.Pathfinder + " | Mover: " + context.Mover);
-        // Ensure required references exist
         if (context.Target == null ||
             context.Pathfinder == null ||
             context.Mover == null)
@@ -33,50 +29,60 @@ public class ActionMoveToTarget : IBehaviorNode
         Vector2 selfPos = context.Self.position;
         Vector2 targetPos = context.Target.position;
 
-        // Countdown repath timer
         _repathTimer -= deltaTime;
 
-        // Need a new path? (no path yet or repath interval elapsed)
-        if (_currentPath == null || _currentPath.Count == 0 || _repathTimer <= 0f)
-        {
-            _currentPath = context.Pathfinder.FindPath(selfPos, targetPos);
-            _currentIndex = 0;
-            _repathTimer = REPATH_INTERVAL;
+        bool needRepath =
+            _currentPath == null ||
+            _currentPath.Count == 0 ||
+            (_repathTimer <= 0 &&
+             Vector2.Distance(targetPos, _lastTargetPos) > TARGET_MOVE_THRESHOLD);
 
-            // If no valid path -> fail and allow Selector/BT to fallback
-            if (_currentPath == null || _currentPath.Count == 0)
+        if (needRepath)
+        {
+            var newPath = context.Pathfinder.FindPath(selfPos, targetPos);
+
+            if (newPath == null || newPath.Count == 0)
             {
                 context.Mover.Stop();
                 return NodeState.Failure;
             }
+
+            _currentPath = newPath;
+
+            context.DebugPath = _currentPath;
+
+            if (_currentPath.Count > 1)
+                _currentPath.RemoveAt(0);
+
+            _currentIndex = 0;
+
+            _repathTimer = REPATH_INTERVAL;
+            _lastTargetPos = targetPos;
         }
 
-        // Clamp index just in case
-        _currentIndex = Mathf.Clamp(_currentIndex, 0, _currentPath.Count - 1);
-
-        Vector2 waypoint = _currentPath[_currentIndex];
-
-        // If close enough to current waypoint -> advance to next one
-        if (Vector2.Distance(selfPos, waypoint) <= WAYPOINT_REACH_RADIUS)
+        if (_currentIndex >= _currentPath.Count)
         {
-            if (_currentIndex < _currentPath.Count - 1)
-            {
-                _currentIndex++;
-                waypoint = _currentPath[_currentIndex];
-            }
-            else
-            {
-                // We are at the last waypoint:
-                // Target may have moved, but next repath will handle it.
-                // For now, we can move directly toward the target to keep chasing.
-                waypoint = targetPos;
-            }
+            context.Mover.MoveTowards(targetPos);
+            return NodeState.Running;
         }
 
-        // Move the enemy toward the current waypoint (or directly toward the target)
+        while (_currentIndex < _currentPath.Count &&
+               Vector2.Distance(selfPos, _currentPath[_currentIndex]) <= WAYPOINT_REACH_RADIUS)
+        {
+            _currentIndex++;
+        }
+
+        Vector2 waypoint;
+
+        if (_currentIndex >= _currentPath.Count)
+            waypoint = targetPos;
+        else
+            waypoint = _currentPath[_currentIndex];
+
+
+
         context.Mover.MoveTowards(waypoint);
 
-        // Chasing is a continuous behavior -> keep running
         return NodeState.Running;
     }
 }

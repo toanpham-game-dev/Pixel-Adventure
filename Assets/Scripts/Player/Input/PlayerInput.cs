@@ -34,14 +34,27 @@ public class PlayerInput : MonoBehaviour, IPlayerInput
 
     private void Update()
     {
-        Move = _moveAction.action.ReadValue<float>();
-    }
-
-    void LateUpdate()
-    {
-        // Make sure to reset JumpDown and JumpUp each frame
         JumpDown = false;
         JumpUp = false;
+
+        float inputSystemMove = _moveAction.action.ReadValue<float>();
+
+        Move = inputSystemMove != 0 ? inputSystemMove : InputBridge.Move;
+
+        // Jump
+        if (InputBridge.JumpPressed)
+        {
+            JumpDown = true;
+            JumpHeld = true;
+            InputBridge.JumpPressed = false;
+        }
+
+        if (InputBridge.JumpReleased)
+        {
+            JumpUp = true;
+            JumpHeld = false;
+            InputBridge.JumpReleased = false;
+        }
     }
 
     private void OnJumpStarted(InputAction.CallbackContext ctx)
