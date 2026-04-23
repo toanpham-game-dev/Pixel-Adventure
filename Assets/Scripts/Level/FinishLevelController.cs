@@ -29,6 +29,7 @@ public class FinishLevelController : MonoBehaviour
             {
                 col.enabled = false;
             }
+            player.RB.bodyType = RigidbodyType2D.Static;
             GameManager.Instance.CompleteLevel(_levelIndex, player.Health.CurrentHealth);
             SceneLoader.Instance.LoadAdditionalScene("Win");
         }

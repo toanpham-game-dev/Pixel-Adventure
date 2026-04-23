@@ -28,7 +28,6 @@ public class ActionCheckWallFlip : IBehaviorNode
             Vector3 scale = context.Self.transform.localScale;
             scale.x *= -1;
             context.Self.transform.localScale = scale;
-            Debug.Log("Hit wall");
         }
 
         return NodeState.Success;

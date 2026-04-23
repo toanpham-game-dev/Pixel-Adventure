@@ -333,6 +333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerScorePresenter
   _playerScore: {fileID: 0}
   _scoreText: {fileID: 1518736}
+  _finalScoreText: {fileID: 0}
 --- !u!1 &393915991
 GameObject:
   m_ObjectHideFlags: 0

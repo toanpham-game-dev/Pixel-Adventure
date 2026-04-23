@@ -5,6 +5,7 @@ public class PlayerScorePresenter : MonoBehaviour
 {
     [SerializeField] private PlayerScore _playerScore;
     [SerializeField] private TMP_Text _scoreText;
+    [SerializeField] private TMP_Text _finalScoreText;
 
     private void Start()
     {
@@ -33,7 +34,15 @@ public class PlayerScorePresenter : MonoBehaviour
     public void UpdateView()
     {
         if (_playerScore == null) return;
-        _scoreText.text = _playerScore?.CurrentScore.ToString();
+
+        if (_finalScoreText != null)
+        {
+            _finalScoreText.text = "success\nscore: " + _playerScore?.CurrentScore.ToString();
+        }
+        if (_scoreText != null)
+        {
+            _scoreText.text = _playerScore?.CurrentScore.ToString();
+        }
     }
 
     public void OnScoreChanged()

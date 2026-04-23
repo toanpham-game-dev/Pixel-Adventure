@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerInput : MonoBehaviour, IPlayerInput
 {
+    [Header("Input Actions (PC)")]
     [SerializeField] private InputActionReference _moveAction;
     [SerializeField] private InputActionReference _jumpAction;
 
@@ -12,24 +13,33 @@ public class PlayerInput : MonoBehaviour, IPlayerInput
     public bool JumpDown { get; private set; }
     public bool JumpHeld { get; private set; }
 
+    private bool _jumpPressedBuffer;
+    private bool _jumpReleasedBuffer;
+
     private void OnEnable()
     {
-        // Move Input
-        _moveAction.action.Enable();
+#if !UNITY_ANDROID
+        // Enable Action Map
+        _moveAction.action.actionMap.Enable();
+        _jumpAction.action.actionMap.Enable();
 
-        // Jump Input
+        _moveAction.action.Enable();
         _jumpAction.action.Enable();
+
         _jumpAction.action.started += OnJumpStarted;
         _jumpAction.action.canceled += OnJumpCanceled;
+#endif
     }
 
     private void OnDisable()
     {
-        // Move Input
-        _moveAction.action.Disable();
+#if !UNITY_ANDROID
+        _jumpAction.action.started -= OnJumpStarted;
+        _jumpAction.action.canceled -= OnJumpCanceled;
 
-        // Jump Input
+        _moveAction.action.Disable();
         _jumpAction.action.Disable();
+#endif
     }
 
     private void Update()
@@ -37,11 +47,10 @@ public class PlayerInput : MonoBehaviour, IPlayerInput
         JumpDown = false;
         JumpUp = false;
 
-        float inputSystemMove = _moveAction.action.ReadValue<float>();
+#if UNITY_ANDROID
+        // ================= MOBILE =================
+        Move = InputBridge.Move;
 
-        Move = inputSystemMove != 0 ? inputSystemMove : InputBridge.Move;
-
-        // Jump
         if (InputBridge.JumpPressed)
         {
             JumpDown = true;
@@ -55,29 +64,52 @@ public class PlayerInput : MonoBehaviour, IPlayerInput
             JumpHeld = false;
             InputBridge.JumpReleased = false;
         }
+
+#else
+        // ================= PC =================
+        Move = _moveAction.action.ReadValue<float>();
+
+        if (_jumpPressedBuffer)
+        {
+            JumpDown = true;
+            JumpHeld = true;
+            _jumpPressedBuffer = false;
+        }
+
+        if (_jumpReleasedBuffer)
+        {
+            JumpUp = true;
+            JumpHeld = false;
+            _jumpReleasedBuffer = false;
+        }
+#endif
     }
 
+#if !UNITY_ANDROID
     private void OnJumpStarted(InputAction.CallbackContext ctx)
     {
-        JumpDown = true;
-        JumpHeld = true;
+        _jumpPressedBuffer = true;
     }
 
     private void OnJumpCanceled(InputAction.CallbackContext ctx)
     {
-        JumpUp = true;
-        JumpHeld = false;
+        _jumpReleasedBuffer = true;
     }
+#endif
 
     public void DisableInput()
     {
+#if !UNITY_ANDROID
         _moveAction.action.Disable();
         _jumpAction.action.Disable();
+#endif
     }
 
     public void EnableInput()
     {
+#if !UNITY_ANDROID
         _moveAction.action.Enable();
         _jumpAction.action.Enable();
+#endif
     }
 }

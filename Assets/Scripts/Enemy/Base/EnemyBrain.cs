@@ -7,6 +7,12 @@ using UnityEngine;
 /// </summary>
 public abstract class EnemyBrain : MonoBehaviour
 {
+    // Number of ticks executed within a time window (used for tick rate measurement)
+    private int tickCount = 0;
+
+    // Accumulated time to measure ticks per second
+    private float tickTimer = 0f;
+
     [Header("Refs")]
     [SerializeField] protected Transform target;
     protected IPathfinder Pathfinder;
@@ -49,9 +55,34 @@ public abstract class EnemyBrain : MonoBehaviour
 
     protected virtual void Update()
     {
-        // Tick the behavior tree each frame while enabled.
+        // Skip update if AI is disabled or no behavior tree is assigned
         if (!Enabled || RootNode == null) return;
+
+        // Start timing for this Behavior Tree tick (performance measurement)
+        float startTime = Time.realtimeSinceStartup;
+
+        // Execute one tick of the Behavior Tree
         RootNode.Tick(Context, Time.deltaTime);
+
+        // Calculate execution time (in milliseconds) for this tick
+        float tickDuration = (Time.realtimeSinceStartup - startTime) * 1000f;
+
+        // Accumulate tick count for tick rate calculation
+        tickCount++;
+        tickTimer += Time.deltaTime;
+
+        // Every 1 second -> compute ticks per second
+        if (tickTimer >= 1f)
+        {
+            // Log how many times the Behavior Tree updates per second
+            //Debug.Log($"BT Tick Rate: {tickCount} ticks/sec");
+
+            tickCount = 0;
+            tickTimer = 0f;
+        }
+
+        // Log execution time of each tick (optional, can average later)
+        //Debug.Log($"BT Tick Time: {tickDuration:F3} ms");
     }
 
     /// <summary>

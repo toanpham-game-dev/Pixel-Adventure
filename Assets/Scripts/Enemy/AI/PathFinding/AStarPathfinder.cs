@@ -25,6 +25,12 @@ public class AStarPathfinder : MonoBehaviour, IPathfinder
     /// </summary>
     public List<Vector2> FindPath(Vector2 startWorldPos, Vector2 targetWorldPos)
     {
+        // Start timing for performance measurement (A* execution time)
+        float startTime = Time.realtimeSinceStartup;
+
+        // Counter for number of processed nodes (used to evaluate search complexity)
+        int nodesVisited = 0;
+
         GridNode startNode = grid.GetNodeFromWorld(startWorldPos);
         GridNode targetNode = grid.GetNodeFromWorld(targetWorldPos);
 
@@ -34,19 +40,34 @@ public class AStarPathfinder : MonoBehaviour, IPathfinder
         var openSet = new List<GridNode> { startNode };
         var closedSet = new HashSet<GridNode>();
 
-        // Reset previous search data
+        // Reset previous search data (GCost, HCost, Parent)
         ResetNodes();
 
         startNode.GCost = 0;
         startNode.HCost = GetDistance(startNode, targetNode);
 
-        // A* search loop
+        // Main A* search loop
         while (openSet.Count > 0)
         {
+            // Increment node counter each time a node is processed
+            // This represents how many nodes the algorithm has explored
+            nodesVisited++;
+
             GridNode current = GetLowestFCost(openSet);
 
+            // Path found -> compute total execution time
             if (current == targetNode)
+            {
+                // Calculate elapsed time in milliseconds
+                float duration = (Time.realtimeSinceStartup - startTime) * 1000f;
+
+                // Log performance metrics:
+                // - duration: time taken for this pathfinding execution
+                // - nodesVisited: number of explored nodes
+                Debug.Log($"A* Time: {duration:F3} ms | Nodes: {nodesVisited}");
+
                 return RetracePath(startNode, targetNode);
+            }
 
             openSet.Remove(current);
             closedSet.Add(current);
@@ -70,6 +91,12 @@ public class AStarPathfinder : MonoBehaviour, IPathfinder
                 }
             }
         }
+
+        // If no path is found, still record performance data
+        float durationFail = (Time.realtimeSinceStartup - startTime) * 1000f;
+
+        // Log failure case for analysis consistency
+        Debug.Log($"A* Failed | Time: {durationFail:F3} ms | Nodes: {nodesVisited}");
 
         return new List<Vector2>();
     }
